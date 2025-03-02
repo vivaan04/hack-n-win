@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinBot – AI Chat</title>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.3.4/axios.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #111;
+      color: #fff;
+      display: flex;
+      height: 100vh;
+    }
+
+    /* Sidebar Styles (Left) */
+    .sidebar {
+      width: 250px;
+      background: #0f0f0f;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .sidebar h2 {
+      font-size: 20px;
+      margin-bottom: 5px;
+    }
+
+    .sidebar p {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 20px;
+    }
+
+    .nav-menu {
+      list-style: none;
+      padding: 0;
+    }
+
+    .nav-menu li {
+      padding: 10px 0;
+    }
+
+    .nav-menu a {
+      text-decoration: none;
+      color: #ccc;
+      font-size: 16px;
+      display: block;
+    }
+
+    .nav-menu a:hover {
+      color: #fff;
+    }
+
+    .separator {
+      margin: 15px 0;
+      border-top: 1px solid #333;
+    }
+
+    /* Chat Container */
+    .chat-container {
+      flex: 1;
+      max-width: 800px;
+      height: 80vh;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #222;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #1b1b1b;
+      margin: auto;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 1rem;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 10px;
+      border-radius: 8px;
+      background-color: #1b1b1b;
+      border: 1px solid #2c2c2c;
+    }
+
+    .from-user { align-self: flex-end; background-color: #272727; }
+    .from-ai { align-self: flex-start; background-color: #2c2c2c; }
+
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      border-top: 1px solid #222;
+      background: #1b1b1b;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      outline: none;
+      background: #2c2c2c;
+      color: #fff;
+      font-size: 1rem;
+      border-radius: 5px;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px 15px;
+      background: #2979ff;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover { background: #005be6; }
+
+    /* Right-Side Navigation Panel */
+    .right-panel {
+      width: 250px;
+      background: #0f0f0f;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .plan-box {
+      background: #1b1b1b;
+      padding: 15px;
+      text-align: center;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .plan-box h3 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .plan-box p {
+      font-size: 14px;
+      color: #999;
+      margin-bottom: 10px;
+    }
+
+    .upgrade-btn {
+      background: #2979ff;
+      color: white;
+      border: none;
+      padding: 10px;
+      width: 100%;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .upgrade-btn:hover {
+      background: #005be6;
+    }
+
+    .stats-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .stat {
+      flex: 1 1 45%;
+      background: #1b1b1b;
+      padding: 10px;
+      text-align: center;
+      border-radius: 5px;
+    }
+
+    .stat h4 {
+      margin: 5px 0;
+      font-size: 16px;
+    }
+
+    .stat p {
+      font-size: 12px;
+      color: #999;
+    }
+
+  </style>
+</head>
+<body>
+
+  <!-- Left Sidebar -->
+  <div class="sidebar">
+    <h2>Wealthwise</h2>
+    <p>Financial Bot</p>
+
+    <ul class="nav-menu">
+      <li><a href="Dashboard.html">Dashboard</a></li>
+      <li><a href="#">Conversations</a></li>
+      <li><a href="#">Insights</a></li>
+      <li><a href="#">Automations</a></li>
+    </ul>
+
+    <div class="separator"></div>
+
+    <ul class="nav-menu">
+      <li><a href="#">+ Add-ons</a></li>
+      <li><a href="#">Settings</a></li>
+      <li><a href="#">Help & Feedback</a></li>
+    </ul>
+  </div>
+
+  <!-- Chat Container -->
+  <div class="chat-container">
+    <div class="messages" id="messages"></div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Chat with FinBot...">
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="right-panel">
+    <div class="plan-box">
+      <h3>Pro Plan</h3>
+      <p>Upgrade to unlock premium features</p>
+      <button class="upgrade-btn">Upgrade</button>
+    </div>
+
+    <div class="stats-box">
+      <div class="stat">
+        <h4>$0</h4>
+        <p>Balance</p>
+      </div>
+      <div class="stat">
+        <h4>$8</h4>
+        <p>Due</p>
+      </div>
+      <div class="stat">
+        <h4>0/100</h4>
+        <p>Unread</p>
+      </div>
+      <div class="stat">
+        <h4>0/100</h4>
+        <p>Unresolved</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById("sendBtn").addEventListener("click", sendMessage);
+    document.getElementById("userInput").addEventListener("keypress", function (event) {
+      if (event.key === "Enter") sendMessage();
+    });
+
+    async function sendMessage() {
+      const userInput = document.getElementById("userInput").value.trim();
+      if (!userInput) return;
+
+      appendMessage("You", userInput, "from-user");
+      document.getElementById("userInput").value = "";
+
+      try {
+        const response = await axios.post("http://localhost:5000/api/chat", { message: userInput });
+        appendMessage("FinBot", response.data.reply, "from-ai");
+      } catch (error) {
+        appendMessage("FinBot", "Sorry, I encountered an error!", "from-ai");
+      }
+    }
+
+    function appendMessage(sender, text, className) {
+      const messageContainer = document.getElementById("messages");
+      const messageElement = document.createElement("div");
+      messageElement.classList.add("message", className);
+      messageElement.innerHTML = `<strong>${sender}:</strong> ${text}`;
+      messageContainer.appendChild(messageElement);
+      messageContainer.scrollTop = messageContainer.scrollHeight;
+    }
+  </script>
+
+</body>
+</html>

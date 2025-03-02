@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FinBot – AI Chat Page</title>
+  <style>
+    /* Reset and Base Styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: "Inter", sans-serif;
+      background-color: #111;
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+    button {
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    /* Top Nav */
+    header {
+      background-color: #111;
+      border-bottom: 1px solid #222;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-left, .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+    .nav-left .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .nav-right a {
+      font-size: 0.95rem;
+      color: #ccc;
+      transition: color 0.2s;
+    }
+    .nav-right a:hover {
+      color: #fff;
+    }
+
+    /* Main Container */
+    .main-container {
+      flex: 1;
+      display: flex;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 240px;
+      background-color: #1b1b1b;
+      border-right: 1px solid #222;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 1.5rem 1rem;
+    }
+    .sidebar-top {
+      margin-bottom: 2rem;
+    }
+    .company-name {
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+    .sidebar-title {
+      font-weight: bold;
+      color: #ccc;
+      font-size: 0.9rem;
+      margin-bottom: 0.5rem;
+    }
+    .sidebar-nav a {
+      display: block;
+      padding: 0.5rem 0.7rem;
+      border-radius: 4px;
+      color: #aaa;
+      margin-bottom: 0.2rem;
+      font-size: 0.9rem;
+      transition: background-color 0.2s;
+    }
+    .sidebar-nav a:hover {
+      background-color: #2c2c2c;
+      color: #fff;
+    }
+    .sidebar-bottom a {
+      display: block;
+      padding: 0.5rem 0;
+      color: #888;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .sidebar-bottom a:hover {
+      color: #ccc;
+    }
+
+    /* Chat Content (Center) */
+    .chat-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1.5rem;
+      overflow-y: auto;
+      gap: 1rem;
+    }
+    .chat-header h2 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+    }
+    .chat-header p {
+      color: #ccc;
+      font-size: 0.95rem;
+    }
+
+    /* Message Area */
+    .messages {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+    .message {
+      display: flex;
+      flex-direction: column;
+      max-width: 70%;
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      background-color: #1b1b1b;
+      border: 1px solid #2c2c2c;
+    }
+    .message .sender {
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      font-size: 0.9rem;
+    }
+    .message .timestamp {
+      font-size: 0.7rem;
+      color: #aaa;
+      margin-top: 0.5rem;
+      align-self: flex-end;
+    }
+    .from-user {
+      align-self: flex-end;
+      background-color: #272727;
+    }
+
+    /* Chat Input */
+    .chat-input {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 1px solid #2c2c2c;
+      background-color: #1b1b1b;
+      border-radius: 4px;
+      padding: 0.5rem;
+    }
+    .chat-input input[type="text"] {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 0.95rem;
+    }
+    .chat-input button {
+      background-color: #2979ff;
+      border: none;
+      border-radius: 4px;
+      padding: 0.5rem 1rem;
+      color: #fff;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+    }
+    .chat-input button:hover {
+      background-color: #005be6;
+    }
+
+    /* Right Panel */
+    .right-panel {
+      width: 280px;
+      border-left: 1px solid #222;
+      background-color: #1b1b1b;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    .plan-upgrade {
+      background-color: #272727;
+      border: 1px solid #2c2c2c;
+      border-radius: 8px;
+      padding: 1rem;
+      text-align: center;
+    }
+    .plan-upgrade h3 {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+    .plan-upgrade p {
+      color: #ccc;
+      font-size: 0.85rem;
+      margin-bottom: 1rem;
+    }
+    .upgrade-btn {
+      background-color: #2979ff;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 500;
+      font-size: 0.9rem;
+      transition: background-color 0.3s;
+    }
+    .upgrade-btn:hover {
+      background-color: #005be6;
+    }
+    .stats-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .stats-card {
+      background-color: #272727;
+      border: 1px solid #2c2c2c;
+      border-radius: 6px;
+      padding: 0.8rem;
+      text-align: center;
+    }
+    .stats-value {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .stats-label {
+      font-size: 0.8rem;
+      color: #aaa;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid #222;
+      background-color: #111;
+      padding: 1rem 2rem;
+      color: #777;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+    }
+    footer a:hover {
+      color: #ccc;
+    }
+    .copyright {
+      color: #555;
+      font-size: 0.8rem;
+    }
+
+  </style>
+</head>
+<body>
+  <!-- TOP NAV -->
+  <header>
+    <div class="nav-left">
+      <div class="logo">FinBot</div>
+    </div>
+    <div class="nav-right">
+      <a href="#">Home</a>
+      <a href="#">Services</a>
+      <a href="#">Pricing</a>
+      <a href="#">Resources</a>
+      <!-- Potential icons or user/avatar could go here -->
+    </div>
+  </header>
+
+  <!-- MAIN CONTAINER -->
+  <div class="main-container">
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div>
+        <div class="sidebar-top">
+          <div class="company-name">Acme Co<br><span style="font-size:0.85rem;color:#777;">Marketing Agency</span></div>
+          <div class="sidebar-title">NAVIGATION</div>
+          <div class="sidebar-nav">
+            <a href="#" class="active">Dashboard</a>
+            <a href="#">Conversations</a>
+            <a href="#">Insights</a>
+            <a href="#">Automations</a>
+          </div>
+        </div>
+      </div>
+      <div class="sidebar-bottom">
+        <a href="#">+ Add-ons</a>
+        <a href="#">Settings</a>
+        <a href="#">Help & Feedback</a>
+      </div>
+    </aside>
+
+    <!-- CHAT CONTENT (CENTER) -->
+    <main class="chat-content">
+      <div class="chat-header">
+        <h2>Hi, I'm RoboFin! How can I help you today?</h2>
+      </div>
+
+      <!-- MESSAGES SECTION -->
+      <div class="messages">
+        <!-- User message -->
+        <div class="message from-user">
+          <div class="sender">David</div>
+          <div class="content">
+            I’d like to know how much money I need to save each month to meet my retirement goals.
+          </div>
+          <div class="timestamp">12:01pm</div>
+        </div>
+
+        <!-- Bot reply -->
+        <div class="message">
+          <div class="sender">RoboFin</div>
+          <div class="content">
+            Great question! I can help you with that. First, I'll need a little more information. What's your current age and the age at which you plan to retire? And what's your target retirement savings goal?
+          </div>
+          <div class="timestamp">12:01pm</div>
+        </div>
+
+        <!-- Another user message -->
+        <div class="message from-user">
+          <div class="sender">David</div>
+          <div class="content">
+            I’m 30 now, and I plan to retire at 65. My goal is to have $1 million saved by then.
+          </div>
+          <div class="timestamp">12:01pm</div>
+        </div>
+
+        <!-- Another bot reply -->
+        <div class="message">
+          <div class="sender">RoboFin</div>
+          <div class="content">
+            Got it! I'll need to ask a few more questions to create a personalized savings plan for you. What is your current annual income? Are you currently saving for retirement? If so, how much are you contributing each month?
+          </div>
+          <div class="timestamp">12:02pm</div>
+        </div>
+      </div>
+
+      <!-- CHAT INPUT -->
+      <div class="chat-input">
+        <input type="text" placeholder="Chat with me..." />
+        <button id="sendBtn">Send</button>
+      </div>
+    </main>
+
+    <!-- RIGHT PANEL -->
+    <aside class="right-panel">
+      <div class="plan-upgrade">
+        <h3>Pro Plan</h3>
+        <p>Upgrade to unlock premium features</p>
+        <button class="upgrade-btn">Upgrade</button>
+      </div>
+
+      <div class="stats-cards">
+        <div class="stats-card">
+          <div class="stats-value">$0</div>
+          <div class="stats-label">Balance</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-value">$8</div>
+          <div class="stats-label">Due</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-value">0/100</div>
+          <div class="stats-label">Unread</div>
+        </div>
+        <div class="stats-card">
+          <div class="stats-value">0/100</div>
+          <div class="stats-label">Unresolved</div>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <a href="#">Privacy Policy</a>
+    <a href="#">Terms of Use</a>
+    <a href="#">Contact</a>
+    <div class="copyright">
+      ©2023 FinBot. All rights reserved.
+    </div>
+  </footer>
+</body>
+</html>

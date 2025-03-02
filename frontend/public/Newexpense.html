@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Add Expense</title>
+  <style>
+    /* RESET / BOX-SIZING */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #0b0b0b; /* Dark background */
+      color: #ffffff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    header {
+      background-color: #121313;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-size: 1.3rem;
+      font-weight: bold;
+    }
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 1rem;
+    }
+    nav li {
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+    nav li:hover {
+      color: #00E3B0;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      flex: 1;
+      max-width: 800px;
+      margin: 2rem auto;
+      background-color: #171717; /* Card-like background */
+      border-radius: 8px;
+      padding: 2rem;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 200px;
+    }
+    .form-group label {
+      margin-bottom: 0.3rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    .form-control {
+      background-color: #121313;
+      color: #ffffff;
+      border: 1px solid #121313;
+      border-radius: 5px;
+      padding: 0.6rem;
+      outline: none;
+      transition: border-color 0.2s ease;
+      font-size: 1rem;
+    }
+    .form-control:focus {
+      border-color: #2979ff;
+    }
+
+    .upload-receipt {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* BUTTON */
+    .btn {
+      background-color: #2979ff;
+      color: #0F1F1C;
+      font-weight: 600;
+      border: none;
+      border-radius: 5px;
+      padding: 0.7rem 1.2rem;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .btn:hover {
+      box-shadow: 0 0 10px #00E3B0;
+      transform: translateY(-2px);
+    }
+
+    /* RECENT ENTRIES TABLE */
+    .recent-entries {
+      margin-top: 2rem;
+    }
+    .recent-entries h2 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background-color: #32403D;
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 0.8rem;
+      border-bottom: 1px solid #1B2E2A;
+    }
+    th {
+      text-align: left;
+      font-weight: 600;
+      background-color: #1B2E2A;
+    }
+    td {
+      font-size: 0.95rem;
+    }
+    .badge {
+      background-color: #121313;
+      border-radius: 5px;
+      padding: 0.3rem 0.6rem;
+      font-size: 0.85rem;
+      color: #bfbfbf;
+      display: inline-block;
+    }
+    .action-link {
+      color: #121313;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      color: #888888;
+      padding: 1rem;
+      background-color: #121313;
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header>
+    <div class="logo">WealthWise</div>
+    <nav>
+      <ul>
+        <li><a href="Dashboard.html">Dashboard</a></li>
+        <li><a href="BudgetPlanner.html">Budgets</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- MAIN CONTENT -->
+  <div class="container">
+    <h1>Add Expense</h1>
+    <form id="expenseForm">
+      <div class="form-row">
+        <!-- Amount -->
+        <div class="form-group">
+          <label for="amountInput">Amount</label>
+          <input
+            type="number"
+            step="0.01"
+            class="form-control"
+            id="amountInput"
+            placeholder="$0.00"
+            required
+          />
+        </div>
+        <!-- Category -->
+        <div class="form-group">
+          <label for="categorySelect">Category</label>
+          <select class="form-control" id="categorySelect" required>
+            <option value="">Select one</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Restaurants">Restaurants</option>
+            <option value="Gas">Gas</option>
+            <option value="Clothing">Clothing</option>
+            <option value="Utilities">Utilities</option>
+            <!-- add more as needed -->
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <!-- Date -->
+        <div class="form-group">
+          <label for="dateInput">Date</label>
+          <input
+            type="date"
+            class="form-control"
+            id="dateInput"
+            required
+          />
+        </div>
+        <!-- Notes -->
+        <div class="form-group">
+          <label for="notesInput">Notes</label>
+          <input
+            type="text"
+            class="form-control"
+            id="notesInput"
+            placeholder="Optional"
+          />
+        </div>
+      </div>
+
+      <!-- Receipt Upload (optional) -->
+      <div class="upload-receipt">
+        <label for="receiptInput" class="btn">Upload Receipt</label>
+        <input
+          type="file"
+          id="receiptInput"
+          style="display:none"
+          accept="image/*"
+        />
+      </div>
+
+      <!-- Add Expense Button -->
+      <button type="submit" class="btn">Add Expense</button>
+    </form>
+
+    <!-- RECENT ENTRIES -->
+    <div class="recent-entries">
+      <h2>Recent Entries</h2>
+      <table id="entriesTable">
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="entriesTbody">
+          <!-- filled by JS -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    &copy; 2025 WealthWise. All rights reserved.
+  </footer>
+
+  <script>
+    // We'll store newly added expenses in localStorage under "budgetData".
+    // The "expense breakdown panel" on Dashboard sums up categories' "spent".
+
+    // 1. Load or create the budgetData structure from localStorage
+    let budgetData = JSON.parse(localStorage.getItem("budgetData")) || {
+      categories: {}, // e.g. { "Groceries": {spent:0,budget:0}, ... }
+      transactions: []
+    };
+
+    const form = document.getElementById("expenseForm");
+    const entriesTbody = document.getElementById("entriesTbody");
+
+    // Populate the "Recent Entries" table from existing budgetData transactions
+    function displayTransactions() {
+      entriesTbody.innerHTML = "";
+      // We'll just show the last few or all. This example shows all in chronological order
+      budgetData.transactions.forEach((tx, idx) => {
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${tx.date}</td>
+          <td><span class="badge">${tx.category}</span></td>
+          <td>$${tx.amount.toFixed(2)}</td>
+          <td>${tx.notes || ""}</td>
+          <td><span class="action-link" onclick="editEntry(${idx})">Edit</span></td>
+        `;
+        entriesTbody.appendChild(tr);
+      });
+    }
+
+    // Optionally implement an edit function
+    function editEntry(index) {
+      alert("Edit feature not implemented. You clicked entry #" + index);
+    }
+
+    // 2. On form submit, add a new transaction
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const amountVal = parseFloat(document.getElementById("amountInput").value) || 0;
+      const categoryVal = document.getElementById("categorySelect").value;
+      const dateVal = document.getElementById("dateInput").value;
+      const notesVal = document.getElementById("notesInput").value.trim();
+
+      // 2a. Append new transaction to budgetData.transactions
+      const newTx = {
+        date: dateVal,
+        category: categoryVal,
+        amount: amountVal,
+        notes: notesVal
+      };
+      budgetData.transactions.push(newTx);
+
+      // 2b. Update categories' "spent" so Dashboard's breakdown reflects it
+      if(!budgetData.categories[categoryVal]) {
+        budgetData.categories[categoryVal] = {
+          spent: 0,
+          budget: 0
+        };
+      }
+      budgetData.categories[categoryVal].spent += amountVal;
+
+      // 2c. Save to localStorage
+      localStorage.setItem("budgetData", JSON.stringify(budgetData));
+
+      // 2d. Clear form
+      form.reset();
+
+      // 2e. Refresh local "Recent Entries" table
+      displayTransactions();
+
+      alert("Expense added successfully!");
+
+      // Optionally: redirect to Dashboard to see changes
+      // window.location.href = "Dashboard.html";
+    });
+
+    // Initialize table on load
+    displayTransactions();
+  </script>
+</body>
+</html>

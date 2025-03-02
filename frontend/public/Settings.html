@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Settings - WealthWise</title>
+  <style>
+    /* RESET / BOX-SIZING */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Default dark theme styling */
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #000000;
+      color: #ffffff;
+      padding: 2rem;
+      margin: 0;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .settings-container {
+      max-width: 600px;
+      margin: auto;
+      background-color: #1b1c1b;
+      padding: 2rem;
+      border-radius: 8px;
+    }
+
+    .setting-item {
+      margin-bottom: 1rem;
+    }
+
+    .setting-item label {
+      font-weight: bold;
+      margin-right: 1rem;
+    }
+
+    /* Theme Toggle Section */
+    .theme-section {
+      margin-top: 2rem;
+      padding-top: 1rem;
+      border-top: 1px solid #32403D;
+    }
+    .theme-section label {
+      margin-right: 1rem;
+    }
+    .theme-section input[type="radio"] {
+      margin-right: 0.5rem;
+    }
+    
+    /* Glowing button effect */
+    .btn-glow {
+      background-color: #2979ff;
+      color: #0F1F1C;
+      font-weight: 600;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+      margin-top: 1rem;
+    }
+    .btn-glow:hover {
+      box-shadow: 0 0 10px #00E3B0;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="settings-container">
+    <h1>Settings</h1>
+    <div class="setting-item">
+      <label>Name:</label>
+      <span id="userName">Guest</span>
+    </div>
+    <div class="setting-item">
+      <label>Email:</label>
+      <span id="userEmail">guest@example.com</span>
+    </div>
+    <div class="setting-item">
+      <label>Password:</label>
+      <span id="userPassword">******</span>
+    </div>
+
+    <!-- Theme Toggle Section -->
+    <div class="theme-section">
+      <label>Theme:</label>
+      <label>
+        <input type="radio" name="theme" value="dark" /> Dark
+      </label>
+      <label>
+        <input type="radio" name="theme" value="light" /> Light
+      </label>
+      <button class="btn-glow" onclick="saveTheme()">Save Theme</button>
+    </div>
+  </div>
+  
+  <script>
+    // Fetch currentUser from localStorage and update settings fields
+    const currentUser = JSON.parse(localStorage.getItem("currentUser")) || {
+      name: "Guest",
+      email: "guest@example.com",
+      password: "******"
+    };
+    document.getElementById("userName").textContent = currentUser.name;
+    document.getElementById("userEmail").textContent = currentUser.email;
+    document.getElementById("userPassword").textContent = currentUser.password;
+
+    // Function to save theme selection
+    function saveTheme() {
+      const themeRadios = document.getElementsByName("theme");
+      let selectedTheme;
+      for (let radio of themeRadios) {
+        if (radio.checked) {
+          selectedTheme = radio.value;
+          break;
+        }
+      }
+      localStorage.setItem("siteTheme", selectedTheme);
+      alert("Theme saved as " + selectedTheme);
+      applyTheme(selectedTheme);
+    }
+
+    // Function to apply the selected theme to the page
+    function applyTheme(theme) {
+      if (theme === "light") {
+        document.body.style.backgroundColor = "#ffffff";
+        document.body.style.color = "#000000";
+      } else {
+        document.body.style.backgroundColor = "#0F1F1C";
+        document.body.style.color = "#ffffff";
+      }
+    }
+
+    // On page load, check for saved theme and apply it, and set the correct radio button
+    const savedTheme = localStorage.getItem("siteTheme") || "dark";
+    const themeRadios = document.getElementsByName("theme");
+    for (let radio of themeRadios) {
+      if (radio.value === savedTheme) {
+        radio.checked = true;
+        break;
+      }
+    }
+    applyTheme(savedTheme);
+  </script>
+</body>
+</html>

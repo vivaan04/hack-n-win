@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WealthWise Dashboard</title>
+  <style>
+    /* RESET */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #111; /* Dark background */
+      color: #ffffff;
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* SIDEBAR */
+    .sidebar {
+      background-color: #1b1b1b; /* same as body to blend */
+      width: 250px;
+      padding: 2rem 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .sidebar .menu {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+    .sidebar .menu a {
+      text-decoration: none;
+      color: #bfbfbf;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .sidebar .menu a:hover {
+      background-color: #1B2E2A;
+      color: #00E3B0;
+    }
+    .sidebar .bottom-links a {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+      color: #bfbfbf;
+      padding: 0.5rem;
+      border-radius: 5px;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+    .sidebar .bottom-links a:hover {
+      background-color: #1B2E2A;
+      color: #00E3B0;
+    }
+
+    /* MAIN WRAPPER */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #0f0e0e;
+      padding: 1rem 2rem;
+      
+    }
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.2rem;
+    }
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .btn-glow {
+      background-color: #2979ff;
+      color: #0F1F1C;
+      font-weight: 600;
+      padding: 0.6rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: box-shadow 0.3s ease, transform 0.3s ease;
+    }
+    .btn-glow:hover {
+      box-shadow: 0 0 10px #2979ff;
+      transform: translateY(-2px);
+    }
+    .profile-pic {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: #1B2E2A;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .profile-pic img {
+      width: 100%;
+      height: auto;
+    }
+
+    /* CONTENT AREA */
+    .content {
+      padding: 2rem;
+      overflow-y: auto; /* scroll if needed */
+    }
+    .content h1 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    /* CARDS WRAPPER */
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .card {
+      background-color: #1B2E2A;
+      border-radius: 8px;
+      padding: 1rem;
+      flex: 1 1 300px;
+      min-width: 280px;
+    }
+    .card h2 {
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+    }
+    .card .amount {
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .card .sub {
+      color: #bfbfbf;
+      margin-bottom: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* EXPENSE BREAKDOWN BARS */
+    .category-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .cat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.9rem;
+    }
+    .cat-row .bar-container {
+      flex: 1;
+      margin: 0 0.5rem;
+      background-color: #32403D;
+      border-radius: 3px;
+      height: 8px;
+      position: relative;
+    }
+    .cat-row .bar {
+      background-color: #00E3B0;
+      height: 100%;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    /* MONTHLY SPENDING CHART (placeholder) */
+    .line-chart {
+      height: 200px;
+      background: linear-gradient(180deg, #12413A 60%, transparent);
+      border-radius: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+    .line {
+      position: absolute;
+      height: 2px;
+      background-color: #00E3B0;
+      top: 50%;
+      left: 10%;
+      width: 80%;
+      transform: translateY(-50%) rotate(-10deg);
+      border-radius: 1px;
+    }
+
+    /* RECENT TRANSACTIONS TABLE */
+    .transactions {
+      background-color: #1B2E2A;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-bottom: 2rem;
+    }
+    .transactions h2 {
+      margin-bottom: 1rem;
+    }
+    .transactions table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    .transactions th {
+      text-align: left;
+      font-weight: 600;
+      padding-bottom: 0.5rem;
+    }
+    .transactions td {
+      padding: 0.5rem 0;
+      border-top: 1px solid #32403D;
+    }
+    .transactions td:first-child {
+      font-weight: 500;
+    }
+    .badge {
+      background-color: #32403D;
+      padding: 0.3rem 0.6rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: #bfbfbf;
+    }
+
+    /* BUDGET OVERVIEW */
+    .budget-overview {
+      background-color: #1B2E2A;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .budget-overview .item {
+      margin-bottom: 1rem;
+    }
+    .budget-overview h3 {
+      margin-bottom: 1rem;
+      font-size: 1.2rem;
+    }
+    .budget-bar-title {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+    .budget-bar-container {
+      width: 100%;
+      background-color: #32403D;
+      height: 10px;
+      border-radius: 5px;
+      position: relative;
+    }
+    .budget-bar-fill {
+      background-color: #00E3B0;
+      width: 0%;
+      height: 100%;
+      border-radius: 5px;
+      transition: width 0.3s ease;
+    }
+    /* "No transactions" message if empty */
+    #noTransactionsMsg {
+      margin-top: 0.5rem;
+      color: #bfbfbf;
+      font-style: italic;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div>
+      <h2>WealthWise</h2>
+      <div class="menu">
+        <!-- UPDATED LINKS -->
+        <a href="Index.html">Home</a>
+        <a href="Newexpense.html">New Expense</a>
+        <a href="BudgetPlanner.html">Budget Planner</a>
+        <a href="aichat.html">AI Assistant</a>
+        <a href="Settings.html">Settings</a>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="#">
+        <span>Invite a friend</span>
+      </a>
+      <a href="#">
+        <span>Help & Feedback</span>
+      </a>
+    </div>
+  </div>
+
+  <!-- Main Wrapper -->
+  <div class="main-wrapper">
+    <!-- Header -->
+    <div class="header">
+      <div class="header-left">
+        <span class="logo"></span>
+      </div>
+      <div class="header-right">
+        <!-- NEW TRANSACTION => NewTransaction.html -->
+        <button class="btn-glow" onclick="window.location.href='NewTransaction.html'">New Transaction</button>
+        <div class="profile-pic">
+          <!-- Placeholder user image or icon -->
+          <img src="./Images/help1.png" alt="Profile">
+        </div>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+      <!-- We'll change "Good evening, Sarah" to user name -->
+      <h1 id="greeting"></h1>
+
+      <!-- Top Cards -->
+      <div class="cards">
+        <!-- Expense Breakdown -->
+        <div class="card">
+          <h2>Expense breakdown (this month)</h2>
+          <div class="amount" id="expenseTotal">$0</div>
+          <div class="sub">7 days</div>
+          <div class="category-bars" id="categoryBars">
+            <!-- We'll fill these with JS based on user data -->
+            <div class="cat-row">
+              <span>Food</span>
+              <div class="bar-container"><div class="bar" data-category="food"></div></div>
+              <span class="cat-value">$0</span>
+            </div>
+            <div class="cat-row">
+              <span>Transport</span>
+              <div class="bar-container"><div class="bar" data-category="transport"></div></div>
+              <span class="cat-value">$0</span>
+            </div>
+            <div class="cat-row">
+              <span>Shopping</span>
+              <div class="bar-container"><div class="bar" data-category="shopping"></div></div>
+              <span class="cat-value">$0</span>
+            </div>
+            <div class="cat-row">
+              <span>Entertainment</span>
+              <div class="bar-container"><div class="bar" data-category="entertainment"></div></div>
+              <span class="cat-value">$0</span>
+            </div>
+            <div class="cat-row">
+              <span>Grocery</span>
+              <div class="bar-container"><div class="bar" data-category="grocery"></div></div>
+              <span class="cat-value">$0</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Spending -->
+        <div class="card">
+          <h2>Monthly spending</h2>
+          <div class="amount" id="monthlySpending">$0</div>
+          <div class="sub">7 days</div>
+          <div class="line-chart">
+            <!-- Minimal placeholder line -->
+            <div class="line"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Transactions -->
+      <div class="transactions">
+        <h2>Recent transactions</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Description</th>
+              <th>Category</th>
+              <th>Date</th>
+              <th>Amount</th>
+            </tr>
+          </thead>
+          <tbody id="transactionsBody">
+            <!-- We'll populate via JS from user data -->
+          </tbody>
+        </table>
+        <p id="noTransactionsMsg">No transactions yet.</p>
+      </div>
+
+      <!-- Budget Overview -->
+      <div class="budget-overview">
+        <h3>Budget overview</h3>
+        <!-- Example repeated bars for categories -->
+        <div class="item" data-category="food">
+          <div class="budget-bar-title">
+            <span>Food</span>
+            <span>$0 / $0</span>
+          </div>
+          <div class="budget-bar-container">
+            <div class="budget-bar-fill"></div>
+          </div>
+        </div>
+        <div class="item" data-category="transport">
+          <div class="budget-bar-title">
+            <span>Transport</span>
+            <span>$0 / $0</span>
+          </div>
+          <div class="budget-bar-container">
+            <div class="budget-bar-fill"></div>
+          </div>
+        </div>
+        <div class="item" data-category="shopping">
+          <div class="budget-bar-title">
+            <span>Shopping</span>
+            <span>$0 / $0</span>
+          </div>
+          <div class="budget-bar-container">
+            <div class="budget-bar-fill"></div>
+          </div>
+        </div>
+        <div class="item" data-category="entertainment">
+          <div class="budget-bar-title">
+            <span>Entertainment</span>
+            <span>$0 / $0</span>
+          </div>
+          <div class="budget-bar-container">
+            <div class="budget-bar-fill"></div>
+          </div>
+        </div>
+        <div class="item" data-category="grocery">
+          <div class="budget-bar-title">
+            <span>Grocery</span>
+            <span>$0 / $0</span>
+          </div>
+          <div class="budget-bar-container">
+            <div class="budget-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 1) Get the current user's name from localStorage
+    // Example: localStorage.setItem("currentUser", JSON.stringify({ name: "Ananya" }));
+    let currentUser = JSON.parse(localStorage.getItem("currentUser"));
+    let userName = currentUser && currentUser.name ? currentUser.name : "User";
+    document.getElementById("greeting").textContent = `Good evening, ${currentUser.name}`;
+
+    // 2) Get the budget data
+    // If none found, default to zeroed-out data
+    const defaultData = {
+      categories: {
+        food: {spent: 0, budget: 0},
+        transport: {spent: 0, budget: 0},
+        shopping: {spent: 0, budget: 0},
+        entertainment: {spent: 0, budget: 0},
+        grocery: {spent: 0, budget: 0}
+      },
+      transactions: []
+    };
+
+    const data = JSON.parse(localStorage.getItem("budgetData")) || defaultData;
+
+    // Calculate totalSpent
+    let totalSpent = 0;
+    let maxSpent = 0;
+    for(let cat in data.categories) {
+      let catSpent = data.categories[cat].spent;
+      if(catSpent > maxSpent) maxSpent = catSpent;
+      totalSpent += catSpent;
+    }
+
+    // Set expenseTotal & monthlySpending
+    document.getElementById("expenseTotal").textContent = `$${totalSpent}`;
+    document.getElementById("monthlySpending").textContent = `$${totalSpent}`;
+
+    // Update category bars
+    const barEls = document.querySelectorAll('.bar');
+    barEls.forEach(barEl => {
+      const cat = barEl.dataset.category;
+      const spent = data.categories[cat]?.spent || 0;
+      let pct = 0;
+      if(maxSpent > 0) {
+        pct = (spent / maxSpent) * 100;
+      }
+      barEl.style.width = pct + '%';
+      // Also update $spent text
+      const valSpan = barEl.parentElement.parentElement.querySelector('.cat-value');
+      if(valSpan) valSpan.textContent = `$${spent}`;
+    });
+
+    // Recent transactions
+    const txBody = document.getElementById('transactionsBody');
+    const noTxMsg = document.getElementById('noTransactionsMsg');
+    if(data.transactions.length === 0) {
+      // no transactions
+      noTxMsg.style.display = 'block';
+    } else {
+      data.transactions.forEach(tx => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${tx.desc}</td>
+          <td><span class="badge">${tx.category}</span></td>
+          <td>${tx.date}</td>
+          <td>$${tx.amount}</td>
+        `;
+        txBody.appendChild(tr);
+      });
+      noTxMsg.style.display = 'none';
+    }
+
+    // Budget overview bars
+    document.querySelectorAll('.budget-overview .item').forEach(itemEl => {
+      const cat = itemEl.dataset.category;
+      const catData = data.categories[cat];
+      if(!catData) return;
+      const ratio = catData.budget > 0 ? catData.spent / catData.budget : 0;
+      const fillWidth = Math.min(ratio * 100, 100);
+      itemEl.querySelector('.budget-bar-fill').style.width = fillWidth + '%';
+      // Show "$spent / $budget"
+      itemEl.querySelector('.budget-bar-title span:last-child')
+        .textContent = `$${catData.spent} / $${catData.budget}`;
+    });
+  </script>
+</body>
+</html>
